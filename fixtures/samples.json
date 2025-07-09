@@ -1,0 +1,209 @@
+[
+  {
+    "version": "0",
+    "id": "bb1b9b2e-4c7d-4a13-b4c1-6f6e6d90f01a",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "123456789012",
+    "time": "2025-07-03T15:12:05Z",
+    "region": "us-east-1",
+    "resources": [
+      "arn:aws:guardduty:us-east-1:123456789012:detector/abcd1234/finding/efgh5678"
+    ],
+    "detail": {
+      "schemaVersion": "2.0",
+      "accountId": "123456789012",
+      "region": "us-east-1",
+      "partition": "aws",
+      "id": "efgh5678",
+      "arn": "arn:aws:guardduty:us-east-1:123456789012:detector/abcd1234/finding/efgh5678",
+      "type": "UnauthorizedAccess:IAMUser/AnomalousBehavior",
+      "resource": {
+        "resourceType": "AccessKey",
+        "accessKeyDetails": {
+          "accessKeyId": "AKIAEXAMPLE1234",
+          "principalId": "AIDEXAMPLE5678",
+          "userType": "IAMUser",
+          "userName": "billing-app"
+        }
+      },
+      "severity": 5,
+      "createdAt": "2025-07-03T15:11:35Z",
+      "updatedAt": "2025-07-03T15:11:35Z",
+      "title": "Anomalous IAM user activity detected",
+      "description": "An IAM user performed actions that deviate from established baseline behavior."
+    }
+  },
+  {
+    "version": "0",
+    "id": "73d19c1e-0cbb-4bba-beaf-aad8d21de2d2",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "123456789012",
+    "time": "2025-07-03T02:47:51Z",
+    "region": "us-west-2",
+    "resources": [
+      "arn:aws:ec2:us-west-2:123456789012:instance/i-0ab1c2d3e4f5g6h7"
+    ],
+    "detail": {
+      "schemaVersion": "2.0",
+      "accountId": "123456789012",
+      "region": "us-west-2",
+      "partition": "aws",
+      "id": "ffdd9988",
+      "arn": "arn:aws:guardduty:us-west-2:123456789012:detector/wxyz6789/finding/ffdd9988",
+      "type": "Recon:EC2/PortProbeUnprotectedPort",
+      "resource": {
+        "resourceType": "Instance",
+        "instanceDetails": {
+          "instanceId": "i-0ab1c2d3e4f5g6h7",
+          "instanceType": "t3.medium",
+          "tags": [
+            {
+              "key": "Name",
+              "value": "web-prod-1"
+            }
+          ]
+        }
+      },
+      "severity": 3,
+      "service": {
+        "additionalInfo": {
+          "probeCount": 12,
+          "portProbeDetails": [
+            {
+              "localPortDetails": {
+                "port": 22,
+                "portName": "SSH"
+              }
+            }
+          ]
+        }
+      },
+      "createdAt": "2025-07-03T02:47:31Z",
+      "updatedAt": "2025-07-03T02:47:31Z",
+      "title": "Port probe on unprotected port",
+      "description": "External host probed port 22 on EC2 instance without a security-group restriction."
+    }
+  },
+  {
+    "version": "0",
+    "id": "64657db3-8da2-41e3-8f7a-98fb7f0d29b1",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "123456789012",
+    "time": "2025-07-02T21:33:12Z",
+    "region": "eu-central-1",
+    "resources": [
+      "arn:aws:guardduty:eu-central-1:123456789012:detector/9876abcd/finding/1122aabb"
+    ],
+    "detail": {
+      "schemaVersion": "2.0",
+      "accountId": "123456789012",
+      "region": "eu-central-1",
+      "partition": "aws",
+      "id": "1122aabb",
+      "arn": "arn:aws:guardduty:eu-central-1:123456789012:detector/9876abcd/finding/1122aabb",
+      "type": "CryptoCurrency:EC2/BitcoinTool.B",
+      "resource": {
+        "resourceType": "Instance",
+        "instanceDetails": {
+          "instanceId": "i-09f0e1d2c3b4a5d6",
+          "instanceType": "c5.large",
+          "launchTime": "2025-06-30T14:02:48Z"
+        }
+      },
+      "severity": 8.9,
+      "createdAt": "2025-07-02T21:32:42Z",
+      "updatedAt": "2025-07-02T21:32:42Z",
+      "title": "Bitcoin mining activity detected",
+      "description": "An EC2 instance is communicating with a known bitcoin mining pool, indicating possible compromise."
+    }
+  },
+  {
+    "version": "0",
+    "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "123456789012",
+    "time": "2025-07-01T11:05:44Z",
+    "region": "ap-southeast-2",
+    "resources": [
+      "arn:aws:eks:ap-southeast-2:123456789012:cluster/prod-eks"
+    ],
+    "detail": {
+      "schemaVersion": "2.0",
+      "accountId": "123456789012",
+      "region": "ap-southeast-2",
+      "partition": "aws",
+      "id": "3344ccdd",
+      "arn": "arn:aws:guardduty:ap-southeast-2:123456789012:detector/klmn5432/finding/3344ccdd",
+      "type": "Impact:Kubernetes/ExecutionSuccessful",
+      "resource": {
+        "resourceType": "KubernetesCluster",
+        "kubernetesDetails": {
+          "kubernetesUserDetails": {
+            "username": "system:serviceaccount:default:ci-runner"
+          },
+          "kubernetesWorkloadDetails": {
+            "name": "order-service",
+            "type": "Deployment"
+          }
+        }
+      },
+      "severity": 6.5,
+      "createdAt": "2025-07-01T11:05:14Z",
+      "updatedAt": "2025-07-01T11:05:14Z",
+      "title": "kubectl exec into container",
+      "description": "A container exec session was successfully established inside a production workload."
+    }
+  },
+  {
+    "version": "0",
+    "id": "0f9e8d7c-6b5a-4c3d-2e1f-0a9b8c7d6e5f",
+    "detail-type": "GuardDuty Finding",
+    "source": "aws.guardduty",
+    "account": "123456789012",
+    "time": "2025-06-30T07:22:18Z",
+    "region": "us-east-2",
+    "resources": [
+      "arn:aws:guardduty:us-east-2:123456789012:detector/1357acdf/finding/2468bdf0"
+    ],
+    "detail": {
+      "schemaVersion": "2.0",
+      "accountId": "123456789012",
+      "region": "us-east-2",
+      "partition": "aws",
+      "id": "2468bdf0",
+      "arn": "arn:aws:guardduty:us-east-2:123456789012:detector/1357acdf/finding/2468bdf0",
+      "type": "Trojan:EC2/DropPoint",
+      "resource": {
+        "resourceType": "Instance",
+        "instanceDetails": {
+          "instanceId": "i-0f1e2d3c4b5a6d7e",
+          "platform": "Linux"
+        }
+      },
+      "severity": 7.2,
+      "service": {
+        "action": {
+          "networkConnectionAction": {
+            "remoteIpDetails": {
+              "ipAddressV4": "203.0.113.55",
+              "organization": {
+                "asn": "13335",
+                "asnOrg": "Cloudflare, Inc."
+              }
+            },
+            "port": 8080,
+            "protocol": "TCP"
+          }
+        }
+      },
+      "createdAt": "2025-06-30T07:21:48Z",
+      "updatedAt": "2025-06-30T07:21:48Z",
+      "title": "Outbound traffic to bot-net drop point",
+      "description": "EC2 instance communicated with a known command-and-control server."
+    }
+  }
+]
