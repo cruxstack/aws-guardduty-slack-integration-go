@@ -7,8 +7,7 @@ without extra tooling.
 
 ## Features
 
-* **native eventbridge trigger** – no SNS fan-out; GuardDuty events invoke the
-  function directly
+* **native eventbridge trigger** – GuardDuty events invoke the function directly
 * **rich slack threads** – each finding opens a thread with severity, region,
   account and a “view in console” button
 * **severity awareness** – low/medium/high/critical color-coding follows AWS
