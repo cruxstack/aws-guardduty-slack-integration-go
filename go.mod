@@ -1,4 +1,4 @@
-module github.com/cruxstack/aws-guardduty-integration-slack
+module github.com/cruxstack/aws-guardduty-slack-integration-go
 
 go 1.24.4
 
