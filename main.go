@@ -100,7 +100,7 @@ func (a *App) CreateThread(f Finding) error {
 	}
 	details := slack.NewSectionBlock(nil, fields, nil)
 	desc := slack.NewSectionBlock(
-		slack.NewTextBlockObject("mrkdwn", f.Description, false, false),
+		slack.NewTextBlockObject("plain_text", f.Description, false, false),
 		nil, nil,
 	)
 	btn := slack.NewButtonBlockElement("view", "", slack.NewTextBlockObject("plain_text", "View in Console", false, false))
