@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sync"
@@ -28,26 +29,35 @@ import (
 // ------------------------------------------------------------------ config ---
 
 type Config struct {
-	DebugEnabled  bool
-	AwsConsoleURL string
-	SlackToken    string
-	SlackChannel  string
+	DebugEnabled       bool
+	AwsAccessPortalURL string
+	AwsAccessRoleName  string
+	AwsConsoleURL      string
+	SlackToken         string
+	SlackChannel       string
 }
 
 func BuildConfig() (Config, error) {
 	cfg := Config{
-		DebugEnabled:  os.Getenv("APP_DEBUG_ENABLED") == "true",
-		AwsConsoleURL: os.Getenv("APP_AWS_CONSOLE_URL"),
-		SlackToken:    os.Getenv("APP_SLACK_TOKEN"),
-		SlackChannel:  os.Getenv("APP_SLACK_CHANNEL"),
+		DebugEnabled:       os.Getenv("APP_DEBUG_ENABLED") == "true",
+		AwsConsoleURL:      os.Getenv("APP_AWS_CONSOLE_URL"),
+		AwsAccessPortalURL: os.Getenv("APP_AWS_ACCESS_PORTAL_URL"),
+		AwsAccessRoleName:  os.Getenv("APP_AWS_ACCESS_ROLE_NAME"),
+		SlackToken:         os.Getenv("APP_SLACK_TOKEN"),
+		SlackChannel:       os.Getenv("APP_SLACK_CHANNEL"),
 	}
 	switch {
 	case cfg.SlackToken == "":
 		return Config{}, errors.New("missing env var APP_SLACK_TOKEN")
 	case cfg.SlackChannel == "":
 		return Config{}, errors.New("missing env var APP_SLACK_CHANNEL")
-	case cfg.AwsConsoleURL == "":
-		return Config{}, errors.New("missing env var APP_AWS_CONSOLE_URL")
+	case cfg.AwsAccessPortalURL == "":
+		return Config{}, errors.New("missing env var APP_AWS_ACCESS_PORTAL_URL")
+	case cfg.AwsAccessRoleName == "":
+		return Config{}, errors.New("missing env var APP_AWS_ACCESS_ROLE_NAME")
+	}
+	if cfg.AwsConsoleURL == "" {
+		cfg.AwsConsoleURL = "https://console.aws.amazon.com"
 	}
 	return cfg, nil
 }
@@ -66,22 +76,33 @@ func NewApp(cfg Config) *App {
 	}
 }
 
-func (a *App) ParseFindingData(raw json.RawMessage) (Finding, error) {
+// https://mytech.awsapps.com/start/#/console?account_id=883776786067&role_name=AdministratorAccess
+// https://console.aws.amazon.com/guardduty/home?region=us-east-1#/findings?macros=current&fId=5ecc8a2d96f2c23bde37397e4cec0cd0
+func (a *App) BuildConsoleURL(gdAccountId string, f *Finding) string {
+	dst := fmt.Sprintf(
+		"%s/guardduty/home?region=%s#/findings?&macros=current&fId=%s",
+		a.cfg.AwsConsoleURL, f.Region, f.ID,
+	)
+	dstEncoded := url.QueryEscape(dst)
+	return fmt.Sprintf(
+		"%s/#/console?account_id=%s&role_name=%s&destination=%s",
+		a.cfg.AwsAccessPortalURL, gdAccountId, a.cfg.AwsAccessRoleName, dstEncoded,
+	)
+}
+
+func (a *App) ParseFindingData(gdAccountId string, raw json.RawMessage) (Finding, error) {
 	var f Finding
 	if err := json.Unmarshal(raw, &f); err != nil {
 		return Finding{}, err
 	}
-	f.ConsoleURL = fmt.Sprintf(
-		"%s/guardduty/home?region=%s#/findings?&macros=current&fId=%s",
-		a.cfg.AwsConsoleURL, f.Region, f.ID,
-	)
+	f.ConsoleURL = a.BuildConsoleURL(gdAccountId, &f)
 	f.Raw = raw
 	f.SeverityLabel = f.ToSeverityLevel()
 	return f, nil
 }
 
-func (a *App) Process(raw json.RawMessage) error {
-	f, err := a.ParseFindingData(raw)
+func (a *App) Process(gdAccountId string, raw json.RawMessage) error {
+	f, err := a.ParseFindingData(gdAccountId, raw)
 	if err != nil {
 		return err
 	}
@@ -187,7 +208,7 @@ func LambdaHandler(_ context.Context, evt events.CloudWatchEvent) error {
 	}
 	log.Print(string(evtJson))
 
-	return app.Process(evt.Detail)
+	return app.Process(evt.AccountID, evt.Detail)
 }
 
 // ------------------------------------------------------------- cmd: sample ---
@@ -220,7 +241,7 @@ func ProcessSamples(a *App) error {
 	}
 
 	for _, e := range events {
-		if err := a.Process(e.Detail); err != nil {
+		if err := a.Process(e.AccountID, e.Detail); err != nil {
 			return fmt.Errorf("process id=%s: %w", e.ID, err)
 		}
 	}
