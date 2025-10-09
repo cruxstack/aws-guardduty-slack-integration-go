@@ -76,8 +76,6 @@ func NewApp(cfg Config) *App {
 	}
 }
 
-// https://mytech.awsapps.com/start/#/console?account_id=883776786067&role_name=AdministratorAccess
-// https://console.aws.amazon.com/guardduty/home?region=us-east-1#/findings?macros=current&fId=5ecc8a2d96f2c23bde37397e4cec0cd0
 func (a *App) BuildConsoleURL(gdAccountId string, f *Finding) string {
 	dst := fmt.Sprintf(
 		"%s/guardduty/home?region=%s#/findings?&macros=current&fId=%s",
